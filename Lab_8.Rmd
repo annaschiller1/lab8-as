@@ -13,14 +13,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 load packaged
-```{r}
+```{r, echo =FALSE}
 library(tidyverse)
 library(sf)
 library(tmap)
 library(leaflet)
 library(spatstat)
 library(maptools)
-
 
 ```
 
@@ -39,6 +38,30 @@ colnames(df) <- c("Year", "Loss")
 
 ggplot(df, aes(x=Year, y= Loss)) +
   geom_col()
+
+```
+### Spatial info, leaflet plit of spill locations
+```{r}
+
+df_loc<- oils_spills %>% 
+  filter(`Accident State` == "TX" & `Accident Year` == 2016) %>% 
+  select(Latitude, Longitude, `Net Loss (Barrels)`)
+
+colnames(df_loc) <- c("lat", "long", "net_loss")
+
+oil_sf<- st_as_sf(df_loc, coords= c("long", "lat"), crs =4326)  #convert to simple features spatial data, can treat as dataframe but will retain spatial features
+
+class(oil_sf)
+
+leaflet(oil_sf) %>% 
+  addTiles() %>% 
+  addMarkers()
+
+
+```
+```{r}
+
+
 
 ```
 
