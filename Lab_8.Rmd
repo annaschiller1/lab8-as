@@ -1,0 +1,44 @@
+---
+title: "Lab_8"
+author: "Anna Schiller"
+date: "3/8/2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+load packaged
+```{r}
+library(tidyverse)
+library(sf)
+library(tmap)
+library(leaflet)
+library(spatstat)
+library(maptools)
+
+
+```
+
+### Column Graph of texas Oil Spills
+
+```{r}
+
+oils_spills<- read_csv("oil_spills.csv") # can use this read_csv instead of read.csv because we have downloaded tidyverse, this reads it as a table dF?
+
+df<- oils_spills %>% 
+  filter(`Accident State` == "TX" & `Accident Year`<2017) %>%  # if there's a space in your column
+  group_by(`Accident Year`) %>% 
+  summarise( Loss = sum(`Net Loss (Barrels)`)) #creates new column that summarizes
+
+colnames(df) <- c("Year", "Loss")
+
+ggplot(df, aes(x=Year, y= Loss)) +
+  geom_col()
+
+```
+
