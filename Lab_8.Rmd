@@ -94,3 +94,58 @@ all_ppp<- ppp(spill_ppp$x, spill_ppp$y, window = tx_owin)
   
 ```
 
+## Kernal density plots
+
+```{r}
+
+plot(density(all_ppp, sigma= 0.4))  #desnity plot of locations of oil spills
+
+```
+
+# Quadrat test for spatial evenness
+
+```{r}
+oil_qt <- quadrat.test(all_ppp,nx = 5, ny = 5 ) # 5 horizontal and vertical regions
+
+oil_qt  # usper small p value hard reject the null value data are not spatially evenly distributed
+
+plot(all_ppp)
+plot(oil_qt, add =TRUE, cex = 0.4)  # expect 14.5 oil spills in the complete quadrats, estimates the proportional expected counts are in in incomplete quadrats
+```
+
+## G Function for Nearest Neighbor Analysis CSR complete spatial randomness
+
+```{r}
+
+r<- seq(0,1, by = 0.01)
+
+oil_gfun <- envelope(all_ppp, fun = Gest, r = r, nsum =100 )
+
+View(oil_gfun)
+
+
+ggplot(oil_gfun, aes(x= r, y = obs))+
+  geom_line(color= "purple")+
+  geom_line(aes(x=r, y =theo), color= "pink")+
+  theme_classic()
+
+# R observed data has a highe rproportion f point pairs with nearest neighbors at shorter distances compared to CSR data
+# our nearest neighbros are close then you would get if it was truly randomly distributed.  envelope ran simulations for CSR data 
+
+```
+
+## nearest neighbor using the L function
+
+```{r}
+
+r2 <- seq(0,3, by = 0.5)
+
+oil_lfun<- envelope(all_ppp, fun = Lest, r = r2, nsim = 20, global = TRUE)
+
+ggplot( oil_lfun, aes( x = r2, y = obs))+
+  geom_line(color= "blue") +
+  geom_line(aes(x= r2, y = theo), color = "turquoise")+
+    theme_classic()
+
+```
+
